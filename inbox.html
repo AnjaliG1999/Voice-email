@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Inbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="inbox-body">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+<div class="row">
+	<div class="col-md-12">
+		<div class="grid email">
+			<div class="grid-body">
+				<div class="row">
+					<div class="col-md-3">
+						<h2 class="grid-title"><i class="fa fa-inbox"></i> Inbox</h2>
+						<a href="composemail.html" class="btn btn-block btn-primary"><i class="fa fa-pencil"></i>&nbsp;&nbsp;NEW MESSAGE</a>
+
+						<hr>
+
+						<div>
+							<ul class="nav nav-pills nav-stacked">
+								<!-- <li class="header">Folders</li> -->
+								<li><a href="index.html"><i class="fa fa-chevron-left"></i>Back to Dashboard</a></li>
+								<li class="active"><a href="#"><i class="fa fa-inbox"></i> Inbox</a></li>
+								<!-- <li><a href="draft.html"><i class="fa fa-pencil-square-o"></i>Drafts</a></li> -->
+							</ul>
+						</div>
+					</div>
+					
+					<div class="col-md-9">
+						
+						<div class="padding"></div>
+						
+						<div class="table-responsive">
+							<table class="table">
+								<tbody id="inbox-mails">
+									
+								</tbody>
+							</table>
+						</div>
+
+						<!-- <ul class="pagination">
+							<li class="disabled"><a href="#">«</a></li>
+							<li class="active"><a href="#">1</a></li>
+							<li><a href="#">2</a></li>
+							<li><a href="#">3</a></li>
+							<li><a href="#">4</a></li>
+							<li><a href="#">5</a></li>
+							<li><a href="#">»</a></li>
+						</ul>						 -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="script.js"></script>
+<!-- <script src="emails.js"></script> -->
+
+<script type="text/javascript">
+	const url = "http://localhost:8000/receive";
+	// const url = "http://localhost:8000";
+
+	const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+	getData = (url, cb) => {
+	fetch(url)
+		.then(response => response.json())
+		.then(result => cb(result));
+	}
+
+	getData(url, (data) => {
+		
+		for(mail of data){
+			var currentTime = new Date(mail.Date);
+			var currentOffset = currentTime.getTimezoneOffset();
+			var ISTOffset = 330;   // IST offset UTC +5:30 
+			var ISTTime = new Date(currentTime.getTime() + (ISTOffset + currentOffset)*60000);
+			var hoursIST = ('0' + ISTTime.getHours()).slice(-2);
+			var minutesIST = ('0' + ISTTime.getMinutes()).slice(-2);
+			var time = `${hoursIST}:${minutesIST}`;
+			var date = `${months[currentTime.getUTCMonth()]} ${currentTime.getUTCDate()}, ${currentTime.getUTCFullYear()}`
+
+			// console.log(hoursIST, minutesIST);
+			// console.log(currentTime.getUTCDate())
+			// console.log(currentTime.getUTCFullYear())
+			// console.log(months[currentTime.getUTCMonth()])
+
+			document.getElementById('inbox-mails').innerHTML += `          
+				<tr>
+					<td class="action"><input type="checkbox" /></td>
+					<td class="name">${mail.From}</td>
+					<td class="subject"><a onclick="textToAudio('Opening email')" href="./readEmail.html?id=${mail.Message_id}">${mail.Subject}</a></td>
+					<td class="time">${date} ${time}</td>
+				</tr>
+			`
+			// console.log(mail.mailId);
+			// count += 1;
+		}
+	})
+
+	document.addEventListener("keypress", function(e) {
+		// console.log(e)
+		// enter key
+		if (e.keyCode === 13) {
+			// console.log('hi');
+			navigateInbox();
+		}
+	}, false);
+	
+</script>
+</body>
+</html>

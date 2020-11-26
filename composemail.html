@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Compose mail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>	
+<link rel="stylesheet" type="text/css" href="style.css">
+	<header>
+        <div>Compose new email</div>
+    </header>
+    <main class="compose-main">
+    	<div class="compose">
+    		<form role="form" id="sendForm">
+		    	<div class="compose-row">
+		    		<label for="to" class="compose-label">To:</label>
+		    		<span>
+		                <input type="email" id="to" class="input-compose" placeholder="Receiver's Email">
+			    	</span>
+			  	</div>
+					<!-- <div class="compose-row">
+						<label for="cc" class="compose-label">CC:</label>
+						<span>
+							<input type="email" id="cc" class="input-compose" placeholder="Carbon Copy Addresses">
+						</span>
+					</div> -->
+				<!-- <div class="compose-row">
+			    	<label for="bcc" class="compose-label">BCC:</label>
+			    	<span>
+		                <input type="email" id="bcc" class="input-compose" placeholder="Blind Carbon Copy Addresses">
+			    	</span>
+			  	</div> -->
+				<div class="compose-row">
+			    	<label for="subject" class="compose-label">Subject:</label>
+			    	<span>
+		                <input type="email" id="subject" class="input-compose" placeholder="Subject Line">
+			    	</span>
+				</div>
+
+				<div>
+					<textarea id="message" name="body" rows="16" placeholder="Email content"></textarea>
+				</div>
+			</form>
+
+			
+				
+			<div class="buttons">	
+				<button type="submit" class="btn-send" onclick="sendMail()">Send</button>
+				<!-- <button type="submit" class="btn-draft">Draft</button> -->
+				<button type="reset" class="btn-cancel" onclick="cancelSend()">Discard</button>
+			</div>
+    	</div>
+    	
+    </main>
+
+    <!-- <footer>
+        <div>Email System 📧</div>
+    </footer> -->
+	<script src="sendEmail.js"></script>
+	
+</body>
+</html>

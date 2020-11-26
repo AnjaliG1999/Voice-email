@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Read Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="inbox-body">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+<div class="row">
+	<div class="col-md-12">
+		<div class="grid email">
+			<div class="grid-body">
+				<div class="row">
+					<div class="col-md-3">
+						<h2 class="grid-title">Read Email</h2>
+						<h4>dummy21072000@gmail.com</h4>
+						<br>
+						<a href="composemail.html" class="btn btn-block btn-primary"><i class="fa fa-pencil"></i>&nbsp;&nbsp;NEW MESSAGE</a>
+
+						<hr>
+
+						<div>
+							<ul class="nav nav-pills nav-stacked">
+								<!-- <li class="header">Folders</li> -->
+								<li><a href="index.html"><i class="fa fa-chevron-left"></i>Back to Dashboard</a></li>
+								<li><a href="inbox.html"><i class="fa fa-inbox"></i> Inbox</a></li>
+								<!-- <li><a href="draft.html"><i class="fa fa-pencil-square-o"></i>Drafts</a></li> -->
+							</ul>
+						</div>
+					</div>
+					
+					<div class="col-md-9">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="btn-group">
+									<button id="play" type="button" class="btn btn-inbox">
+										Play
+									</button>
+
+									<button id="pause" type="button" class="btn btn-inbox">
+										Pause
+									</button>
+
+									<button id="resume" type="button" class="btn btn-inbox">
+										Resume
+									</button>
+
+									<button id="cancel" type="button" class="btn btn-inbox">
+										Cancel
+									</button>
+								</div>
+							</div>
+
+							<div class="col-md-6 search-form">
+								<div>
+									<img src="./assets/user.jpg" alt="user-profile" class="user-img"> 
+									<b id="sender"></b>
+								</div>
+							</div>
+						</div>
+						<hr>
+						<div class=subject-date>
+							<span id="subject"></span>
+							<i id="date"></i>
+						</div>						
+						<div class="padding"></div>
+						
+						<div>
+							<p id="email-body"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<!-- <script src="readEmail.js"></script> -->
+<!-- <script src="emails.js"></script> -->
+
+<script>
+	const url = "http://localhost:8000/receive";
+
+	const play = document.getElementById('play');
+	const pause = document.getElementById('pause');
+	const resume = document.getElementById('resume');
+	const cancel = document.getElementById('cancel');
+
+	const sender = document.getElementById('sender');
+	const subject = document.getElementById('subject');
+	const date = document.getElementById('date');
+	const email_body = document.getElementById('email-body');
+
+	let currentId = new URL(window.location.href).searchParams.get("id");
+	currentId = currentId.replace(/\s/g, '+')
+	// console.log(currentId)
+
+	function getData(url, cb) {
+	fetch(url)
+		.then(response => response.json())
+		.then(result => cb(result));
+	}
+
+	getData(url, (data) => {
+		
+		for(mail of data){
+			if(mail.Message_id == currentId){
+				// console.log('Match found')
+				document.getElementById('sender').innerText = mail.From;
+				document.getElementById('subject').innerText = mail.Subject;
+				document.getElementById('date').innerText = mail.Date;
+				document.getElementById('email-body').innerText = mail.Content;
+				break;
+			}
+		}
+	})	
+
+	document.addEventListener("keydown", function(e) {
+		console.log(e)
+		if (e.code === 'Escape') {
+			cancel.click();
+		}
+		else if (e.code === 'Enter') {
+			play.click();
+
+		}
+		else if (e.code === 'KeyJ') {
+			pause.click();
+		}
+		else if (e.code === 'KeyF') {
+			resume.click();
+		} else if (e.code === 'Space') {
+			// speech rec
+		}
+	}, false);
+
+	play.addEventListener('click', () => {
+		const data = `From: ${sender.innerText}. Subject: ${subject.innerText}. Delivered on: ${date.innerText}. ${email_body.innerText}`;
+		// console.log(data);
+
+		var speech = new SpeechSynthesisUtterance(data);
+		speech.lang = "en-US";
+
+		// console.log(play, pause, resume, cancel);
+		
+		// speech.text = msg;
+		// speech.volume = 1;
+		// speech.rate = 1;
+		// speech.pitch = 1;
+
+		speechSynthesis.speak(speech);
+	});
+
+	cancel.addEventListener('click', () => {
+		speechSynthesis.cancel();
+		console.log('stopping');
+	});
+
+	pause.addEventListener('click', () => {
+		speechSynthesis.pause();
+		console.log('paused');
+	});
+
+	resume.addEventListener('click', () => {
+		speechSynthesis.resume();
+		console.log('resuming');
+	});
+	
+</script>
+</body>
+</html>
