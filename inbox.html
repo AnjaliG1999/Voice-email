@@ -32,6 +32,28 @@
 					</div>
 					
 					<div class="col-md-9">
+
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="btn-group">
+									<button id="play" type="button" class="btn btn-inbox">
+										Play
+									</button>
+
+									<button id="pause" type="button" class="btn btn-inbox">
+										Pause
+									</button>
+
+									<button id="resume" type="button" class="btn btn-inbox">
+										Resume
+									</button>
+
+									<button id="cancel" type="button" class="btn btn-inbox">
+										Cancel
+									</button>
+								</div>
+							</div>
+						</div>
 						
 						<div class="padding"></div>
 						
@@ -42,16 +64,6 @@
 								</tbody>
 							</table>
 						</div>
-
-						<!-- <ul class="pagination">
-							<li class="disabled"><a href="#">«</a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">4</a></li>
-							<li><a href="#">5</a></li>
-							<li><a href="#">»</a></li>
-						</ul>						 -->
 					</div>
 				</div>
 			</div>
@@ -94,10 +106,10 @@
 			// console.log(months[currentTime.getUTCMonth()])
 
 			document.getElementById('inbox-mails').innerHTML += `          
-				<tr>
+				<tr class='inbox-row'>
 					<td class="action"><input type="checkbox" /></td>
 					<td class="name">${mail.From}</td>
-					<td class="subject"><a onclick="textToAudio('Opening email')" href="./readEmail.html?id=${mail.Message_id}">${mail.Subject}</a></td>
+					<td class="subject"><a id='msg-link' onclick="cancel.click()" href="./readEmail.html?id=${mail.Message_id}">${mail.Subject}</a></td>
 					<td class="time">${date} ${time}</td>
 				</tr>
 			`
@@ -106,14 +118,63 @@
 		}
 	})
 
-	document.addEventListener("keypress", function(e) {
-		// console.log(e)
-		// enter key
-		if (e.keyCode === 13) {
-			// console.log('hi');
-			navigateInbox();
+	// document.addEventListener("keypress", function(e) {
+	// 	// console.log(e)
+	// 	// enter key
+	// 	if (e.keyCode === 13) {
+	// 		// console.log('hi');
+	// 		navigateInbox();
+	// 	}
+	// }, false);
+
+	const play = document.getElementById('play');
+	const pause = document.getElementById('pause');
+	const resume = document.getElementById('resume');
+	const cancel = document.getElementById('cancel');
+		
+	document.addEventListener("keydown", function(e) {
+		console.log(e)
+		if (e.code === 'Escape') {
+			cancel.click();
+		}
+		else if (e.code === 'Enter') {
+			play.click();
+
+		}
+		else if (e.code === 'KeyJ') {
+			pause.click();
+		}
+		else if (e.code === 'KeyF') {
+			resume.click();
+		} else if (e.code === 'Space') {
+			// speech rec
 		}
 	}, false);
+
+	play.addEventListener('click', () => {
+		const data = document.getElementById("inbox-mails").innerText;
+		console.log(data);
+
+		var speech = new SpeechSynthesisUtterance(data);
+		speech.lang = "en-US";
+
+		speechSynthesis.speak(speech);
+	});
+
+	cancel.addEventListener('click', () => {
+		speechSynthesis.cancel();
+		console.log('stopping');
+	});
+
+	pause.addEventListener('click', () => {
+		speechSynthesis.pause();
+		console.log('paused');
+	});
+
+	resume.addEventListener('click', () => {
+		speechSynthesis.resume();
+		console.log('resuming');
+	});
 	
 </script>
 </body>
